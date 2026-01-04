@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新闻管理系统</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <!-- 引入Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div id="loginPage" style="display: block;">
+        <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+            <div class="card" style="width: 400px;">
+                <div class="card-header bg-dark text-white text-center">
+                    <h3>新闻管理系统登录</h3>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="loginUsername" name="a_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="loginPassword" name="a_pwd" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">登录</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用界面 -->
+    <div id="appPage" style="display: none;">
+        <!-- 导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">新闻管理系统</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showHome()">首页</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showNewsList()">新闻列表</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showNewsPublish()">发布新闻</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showUserManagement()">用户管理</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="nav-link" id="welcomeText">欢迎，用户</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="logout()">退出登录</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="container mt-4">
+        <div id="mainContent">
+            <!-- 首页内容 -->
+            <div id="homeContent" class="content-section">
+                <h1 class="text-center">欢迎使用新闻管理系统</h1>
+                <div class="row mt-5">
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">新闻列表</h5>
+                                <p class="card-text">查看所有新闻内容</p>
+                                <a href="#" class="btn btn-primary" onclick="showNewsList()">进入</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">发布新闻</h5>
+                                <p class="card-text">发布新的新闻内容</p>
+                                <a href="#" class="btn btn-primary" onclick="showNewsPublish()">进入</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">新闻详情</h5>
+                                <p class="card-text">查看新闻的详细信息</p>
+                                <a href="#" class="btn btn-primary" onclick="showNewsList()">浏览新闻</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新闻列表内容 -->
+            <div id="newsListContent" class="content-section" style="display: none;">
+                <h2>新闻列表</h2>
+                <div class="mb-3">
+                    <label for="pageInput" class="form-label">页码：</label>
+                    <input type="number" id="pageInput" class="form-control" style="width: 100px; display: inline-block;" min="1" value="1">
+                    <button class="btn btn-primary" onclick="loadNewsList()">查询</button>
+                </div>
+                <div id="newsList" class="list-group">
+                    <!-- 新闻列表将通过JavaScript动态加载 -->
+                </div>
+            </div>
+
+            <!-- 新闻详情内容 -->
+            <div id="newsDetailContent" class="content-section" style="display: none;">
+                <h2 id="newsDetailTitle"></h2>
+                <div class="mt-3">
+                    <span id="newsDetailInfo"></span>
+                </div>
+                <div class="mt-4">
+                    <img id="newsDetailImage" src="" alt="新闻图片" class="img-fluid mb-4">
+                    <div id="newsDetailContentText"></div>
+                </div>
+                <button class="btn btn-primary mt-4" onclick="showNewsList()">返回列表</button>
+            </div>
+
+            <!-- 新闻发布内容 -->
+            <div id="newsPublishContent" class="content-section" style="display: none;">
+                <h2>发布新闻</h2>
+                <form id="newsPublishForm" class="mt-3">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">标题</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">内容</label>
+                        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="author" class="form-label">作者</label>
+                        <input type="text" class="form-control" id="author" name="author" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">类型</label>
+                        <select class="form-control" id="type" name="type" required>
+                            <option value="1">国内新闻</option>
+                            <option value="2">国际新闻</option>
+                            <option value="3">科技新闻</option>
+                            <option value="4">娱乐新闻</option>
+                            <option value="5">体育新闻</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pic" class="form-label">图片</label>
+                        <input type="file" class="form-control" id="pic" name="pic" accept="*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">发布时间</label>
+                        <input type="datetime-local" class="form-control" id="time" name="time">
+                    </div>
+                    <button type="submit" class="btn btn-primary">发布</button>
+                </form>
+            </div>
+
+            <!-- 用户管理内容 -->
+            <div id="userManagementContent" class="content-section" style="display: none;">
+                <h2>用户管理</h2>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <button class="btn btn-primary" onclick="showUserRegister()">添加用户</button>
+                        <button class="btn btn-info" onclick="refreshUserList()">刷新列表</button>
+                    </div>
+                    <div>
+                        <input type="text" id="userSearchInput" class="form-control" placeholder="搜索用户" style="width: 200px; display: inline-block;">
+                        <button class="btn btn-secondary" onclick="searchUser()">搜索</button>
+                    </div>
+                </div>
+                <div id="userList" class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>用户ID</th>
+                                <th>用户名</th>
+                                <th>电话</th>
+                                <th>图片</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- 用户列表将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 添加用户内容 -->
+            <div id="userRegisterContent" class="content-section" style="display: none;">
+                <h2>添加用户</h2>
+                <form id="userRegisterForm" class="mt-3">
+                    <div class="mb-3">
+                        <label for="registerUsername" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="registerUsername" name="a_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="registerPassword" name="a_pwd" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPhone" class="form-label">电话</label>
+                        <input type="text" class="form-control" id="registerPhone" name="a_phone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPic" class="form-label">图片路径</label>
+                        <input type="text" class="form-control" id="registerPic" name="a_pic" placeholder="例如：upimages/a1.png">
+                    </div>
+                    <button type="submit" class="btn btn-primary">添加</button>
+                    <button type="button" class="btn btn-secondary" onclick="showUserManagement()">取消</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white text-center mt-5 py-3">
+        <p>&copy; 2025 新闻管理系统</p>
+    </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        var currentAdmin = null;
+
+        // 页面切换函数
+        function showHome() {
+            hideAllSections();
+            document.getElementById('homeContent').style.display = 'block';
+        }
+
+        function showNewsList() {
+            hideAllSections();
+            document.getElementById('newsListContent').style.display = 'block';
+            loadNewsList(); // 加载新闻列表
+        }
+
+        function showNewsDetail(id) {
+            hideAllSections();
+            document.getElementById('newsDetailContent').style.display = 'block';
+            loadNewsDetail(id); // 加载新闻详情
+        }
+
+        function showNewsPublish() {
+            hideAllSections();
+            document.getElementById('newsPublishContent').style.display = 'block';
+        }
+
+        function showUserManagement() {
+            hideAllSections();
+            document.getElementById('userManagementContent').style.display = 'block';
+            loadUserList(); // 加载用户列表
+        }
+
+        function showUserRegister() {
+            hideAllSections();
+            document.getElementById('userRegisterContent').style.display = 'block';
+        }
+
+        // 隐藏所有内容区域
+        function hideAllSections() {
+            var sections = document.getElementsByClassName('content-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = 'none';
+            }
+        }
+
+        // 登录功能
+        function login(username, password) {
+            $.ajax({
+                url: '/LoginServlet',
+                type: 'POST',
+                data: { a_name: username, a_pwd: password },
+                dataType: 'json',
+                success: function(admin) {
+                    if (admin.a_state === 4) {
+                        // 登录成功
+                        currentAdmin = admin;
+                        document.getElementById('welcomeText').textContent = '欢迎，' + admin.a_name;
+                        document.getElementById('loginPage').style.display = 'none';
+                        document.getElementById('appPage').style.display = 'block';
+                        showHome();
+                    } else {
+                        // 登录失败
+                        var message = '';
+                        switch (admin.a_state) {
+                            case 2:
+                                message = '用户名不存在！';
+                                break;
+                            case 3:
+                                message = '密码不匹配！';
+                                break;
+                            default:
+                                message = '登录失败！';
+                        }
+                        alert(message);
+                    }
+                },
+                error: function() {
+                    alert('登录失败，请检查网络连接！');
+                }
+            });
+        }
+
+        // 登出功能
+        function logout() {
+            currentAdmin = null;
+            document.getElementById('appPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            $('#loginForm')[0].reset();
+        }
+
+        // 加载用户列表
+        function loadUserList() {
+            $.ajax({
+                url: '/admin/GetAll',
+                type: 'POST',
+                dataType: 'json',
+                success: function(adminList) {
+                    var tableBody = document.getElementById('userTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    if (adminList.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">没有找到用户</td></tr>';
+                        return;
+                    }
+                    
+                    for (var i = 0; i < adminList.length; i++) {
+                        var admin = adminList[i];
+                        var row = document.createElement('tr');
+                        
+                        var idCell = document.createElement('td');
+                        idCell.textContent = admin.a_id.toString();
+                        row.appendChild(idCell);
+                        
+                        var nameCell = document.createElement('td');
+                        nameCell.textContent = admin.a_name;
+                        row.appendChild(nameCell);
+                        
+                        var phoneCell = document.createElement('td');
+                        phoneCell.textContent = admin.a_phone || '-';
+                        row.appendChild(phoneCell);
+                        
+                        var picCell = document.createElement('td');
+                        if (admin.a_pic) {
+                            var img = document.createElement('img');
+                            // 直接使用后端提供的完整图片路径
+                            img.src = '/upimages/' + admin.a_pic;
+                            img.style.width = '50px';
+                            img.style.height = '50px';
+                            img.style.objectFit = 'cover';
+                            picCell.appendChild(img);
+                        } else {
+                            picCell.textContent = '-';
+                        }
+                        row.appendChild(picCell);
+                        
+                        var actionCell = document.createElement('td');
+                        var editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-sm btn-primary me-2';
+                        editBtn.textContent = '编辑';
+                        editBtn.onclick = (function(admin) { return function() { editUser(admin); }; })(admin);
+                        
+                        var deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-sm btn-danger';
+                        deleteBtn.textContent = '删除';
+                        deleteBtn.onclick = (function(id) { return function() { deleteUser(id); }; })(admin.a_id);
+                        
+                        actionCell.appendChild(editBtn);
+                        actionCell.appendChild(deleteBtn);
+                        row.appendChild(actionCell);
+                        
+                        tableBody.appendChild(row);
+                    }
+                },
+                error: function() {
+                    alert('加载用户列表失败');
+                }
+            });
+        }
+
+        // 刷新用户列表
+        function refreshUserList() {
+            loadUserList();
+        }
+
+        // 搜索用户
+        function searchUser() {
+            var keyword = document.getElementById('userSearchInput').value;
+            $.ajax({
+                url: '/admin/GetAll',
+                type: 'POST',
+                dataType: 'json',
+                success: function(adminList) {
+                    var tableBody = document.getElementById('userTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    // 过滤符合条件的用户
+                    var filteredList = adminList.filter(function(admin) {
+                        // 检查用户名或电话是否包含搜索关键词
+                        var nameMatch = admin.a_name.toLowerCase().includes(keyword.toLowerCase());
+                        var phoneMatch = admin.a_phone ? admin.a_phone.includes(keyword) : false;
+                        return nameMatch || phoneMatch;
+                    });
+                    
+                    if (filteredList.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">没有找到匹配的用户</td></tr>';
+                        return;
+                    }
+                    
+                    // 渲染搜索结果
+                    for (var i = 0; i < filteredList.length; i++) {
+                        var admin = filteredList[i];
+                        var row = document.createElement('tr');
+                        
+                        var idCell = document.createElement('td');
+                        idCell.textContent = admin.a_id;
+                        row.appendChild(idCell);
+                        
+                        var nameCell = document.createElement('td');
+                        nameCell.textContent = admin.a_name;
+                        row.appendChild(nameCell);
+                        
+                        var phoneCell = document.createElement('td');
+                        phoneCell.textContent = admin.a_phone || '-';
+                        row.appendChild(phoneCell);
+                        
+                        var picCell = document.createElement('td');
+                        if (admin.a_pic) {
+                            var img = document.createElement('img');
+                            // 如果路径已经以/开头，就直接使用，否则添加/前缀
+                            img.src = '/upimages/' + admin.a_pic;
+                            img.style.width = '50px';
+                            img.style.height = '50px';
+                            img.style.objectFit = 'cover';
+                            picCell.appendChild(img);
+                        } else {
+                            picCell.textContent = '-';
+                        }
+                        row.appendChild(picCell);
+                        
+                        var actionCell = document.createElement('td');
+                        var editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-sm btn-primary me-2';
+                        editBtn.textContent = '编辑';
+                        editBtn.onclick = (function(admin) { return function() { editUser(admin); }; })(admin);
+                        
+                        var deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-sm btn-danger';
+                        deleteBtn.textContent = '删除';
+                        deleteBtn.onclick = (function(id) { return function() { deleteUser(id); }; })(admin.a_id);
+                        
+                        actionCell.appendChild(editBtn);
+                        actionCell.appendChild(deleteBtn);
+                        row.appendChild(actionCell);
+                        
+                        tableBody.appendChild(row);
+                    }
+                },
+                error: function() {
+                    alert('搜索用户失败');
+                }
+            });
+        }
+
+        // 编辑用户
+        function editUser(admin) {
+            // 弹出编辑用户的模态框
+            showEditUserModal(admin);
+        }
+        
+        // 显示编辑用户模态框
+        function showEditUserModal(admin) {
+            // 使用Bootstrap模态框
+            const modalHtml = `
+                <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">编辑用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editUserForm">
+                                    <input type="hidden" id="editUserId" name="a_id" value="${admin.a_id}">
+                                    <div class="mb-3">
+                                        <label for="editUsername" class="form-label">用户名</label>
+                                        <input type="text" class="form-control" id="editUsername" name="a_name" value="${admin.a_name}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editPassword" class="form-label">密码</label>
+                                        <input type="password" class="form-control" id="editPassword" name="a_pwd" placeholder="不修改请留空">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editPhone" class="form-label">电话</label>
+                                        <input type="text" class="form-control" id="editPhone" name="a_phone" value="${admin.a_phone || ''}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editPic" class="form-label">图片路径</label>
+                                        <input type="text" class="form-control" id="editPic" name="a_pic" value="${admin.a_pic || ''}" placeholder="例如：upimages/a1.png">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveUserEdit()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 插入模态框
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer);
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modal.show();
+            
+            // 模态框关闭时移除
+            document.getElementById('editUserModal').addEventListener('hidden.bs.modal', function() {
+                modalContainer.remove();
+            });
+        }
+        
+        // 保存用户编辑
+        function saveUserEdit() {
+            const form = document.getElementById('editUserForm');
+            const formData = new FormData(form);
+            
+            // 构建请求数据
+            const data = {
+                a_id: formData.get('a_id'),
+                a_name: formData.get('a_name'),
+                a_pwd: formData.get('a_pwd'),
+                a_phone: formData.get('a_phone'),
+                a_pic: formData.get('a_pic')
+            };
+            
+            // 如果密码为空，则不修改密码
+            if (data.a_pwd === '') {
+                delete data.a_pwd;
+            }
+            
+            $.ajax({
+                url: '/admin/Edit',
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    alert(response);
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    modal.hide();
+                    // 刷新用户列表
+                    loadUserList();
+                },
+                error: function() {
+                    alert('编辑用户失败');
+                }
+            });
+        }
+
+        // 删除用户
+        function deleteUser(id) {
+            if (confirm('确定要删除这个用户吗？')) {
+                $.ajax({
+                    url: '/admin/Delete',
+                    type: 'POST',
+                    data: { a_id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadUserList();
+                    },
+                    error: function() {
+                        alert('删除用户失败');
+                    }
+                });
+            }
+        }
+
+        // 加载新闻列表
+        function loadNewsList() {
+            var page = document.getElementById('pageInput').value;
+            $.ajax({
+                url: '/news/list',
+                type: 'GET',
+                data: { page: page },
+                dataType: 'json',
+                success: function(newsList) {
+                    var newsListDiv = document.getElementById('newsList');
+                    newsListDiv.innerHTML = '';
+                    
+                    if (newsList.length === 0) {
+                        newsListDiv.innerHTML = '<div class="alert alert-info">没有找到新闻</div>';
+                        return;
+                    }
+                    
+                    for (var i = 0; i < newsList.length; i++) {
+                        var news = newsList[i];
+                        var listItem = document.createElement('div');
+                        listItem.className = 'list-group-item';
+                        
+                        var newsTitle = document.createElement('h5');
+                        newsTitle.className = 'mb-1';
+                        var titleLink = document.createElement('a');
+                        titleLink.href = '#';
+                        titleLink.onclick = (function(id) { return function() { showNewsDetail(id); }; })(news.n_id);
+                        titleLink.textContent = news.n_title;
+                        newsTitle.appendChild(titleLink);
+                        
+                        var newsMeta = document.createElement('small');
+                        newsMeta.textContent = '作者：' + news.n_author + ' | 发布时间：' + news.n_time;
+                        
+                        var newsContent = document.createElement('p');
+                        newsContent.className = 'mb-1 mt-2';
+                        newsContent.textContent = news.n_content.substring(0, 100) + '...';
+                        
+                        var newsActions = document.createElement('div');
+                        newsActions.className = 'd-flex justify-content-end mt-2';
+                        
+                        var editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-sm btn-primary me-2';
+                        editBtn.textContent = '编辑';
+                        editBtn.onclick = (function(news) { return function(event) { event.stopPropagation(); editNews(news); }; })(news);
+                        
+                        var deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-sm btn-danger';
+                        deleteBtn.textContent = '删除';
+                        deleteBtn.onclick = (function(id) { return function(event) { event.stopPropagation(); deleteNews(id); }; })(news.n_id);
+                        
+                        newsActions.appendChild(editBtn);
+                        newsActions.appendChild(deleteBtn);
+                        
+                        listItem.appendChild(newsTitle);
+                        listItem.appendChild(newsMeta);
+                        listItem.appendChild(newsContent);
+                        listItem.appendChild(newsActions);
+                        newsListDiv.appendChild(listItem);
+                    }
+                },
+                error: function() {
+                    alert('加载新闻列表失败');
+                }
+            });
+        }
+        
+        // 删除新闻
+        function deleteNews(id) {
+            if (confirm('确定要删除这条新闻吗？')) {
+                $.ajax({
+                    url: '/news/delete',
+                    type: 'POST',
+                    data: { n_id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadNewsList(); // 刷新新闻列表
+                    },
+                    error: function() {
+                        alert('删除新闻失败');
+                    }
+                });
+            }
+        }
+        
+        // 编辑新闻
+        function editNews(news) {
+            // 弹出编辑新闻的模态框
+            showEditNewsModal(news);
+        }
+        
+        // 显示编辑新闻模态框
+        function showEditNewsModal(news) {
+            // 使用Bootstrap模态框
+            const modalHtml = `
+                <div class="modal fade" id="editNewsModal" tabindex="-1" aria-labelledby="editNewsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editNewsModalLabel">编辑新闻</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editNewsForm">
+                                    <input type="hidden" id="editNewsId" name="n_id" value="${news.n_id}">
+                                    <input type="hidden" id="editNewsOldPic" name="old_pic" value="${news.n_pic || ''}">
+                                    <div class="mb-3">
+                                        <label for="editNewsTitle" class="form-label">标题</label>
+                                        <input type="text" class="form-control" id="editNewsTitle" name="title" value="${news.n_title}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNewsContent" class="form-label">内容</label>
+                                        <textarea class="form-control" id="editNewsContent" name="content" rows="5" required>${news.n_content}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNewsAuthor" class="form-label">作者</label>
+                                        <input type="text" class="form-control" id="editNewsAuthor" name="author" value="${news.n_author}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNewsType" class="form-label">类型</label>
+                                        <select class="form-control" id="editNewsType" name="type" required>
+                                            <option value="1" ${news.n_type == 1 ? 'selected' : ''}>国内新闻</option>
+                                            <option value="2" ${news.n_type == 2 ? 'selected' : ''}>国际新闻</option>
+                                            <option value="3" ${news.n_type == 3 ? 'selected' : ''}>科技新闻</option>
+                                            <option value="4" ${news.n_type == 4 ? 'selected' : ''}>娱乐新闻</option>
+                                            <option value="5" ${news.n_type == 5 ? 'selected' : ''}>体育新闻</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNewsPic" class="form-label">图片</label>
+                                        <input type="file" class="form-control" id="editNewsPic" name="pic" accept="image/*">
+                                        ${news.n_pic ? `<p class="mt-2"><small>当前图片：<img src="/upimages/${news.n_pic}" alt="当前图片" style="width: 100px; height: auto;"></small></p>` : ''}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNewsTime" class="form-label">发布时间</label>
+                                        <input type="datetime-local" class="form-control" id="editNewsTime" name="time" value="${news.n_time ? news.n_time.replace(' ', 'T').substring(0, 16) : ''}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveNewsEdit()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 插入模态框
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer);
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('editNewsModal'));
+            modal.show();
+            
+            // 模态框关闭时移除
+            document.getElementById('editNewsModal').addEventListener('hidden.bs.modal', function() {
+                modalContainer.remove();
+            });
+        }
+        
+        // 保存新闻编辑
+        function saveNewsEdit() {
+            const form = document.getElementById('editNewsForm');
+            const formData = new FormData(form);
+            
+            $.ajax({
+                url: '/news/update',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    alert(response);
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editNewsModal'));
+                    modal.hide();
+                    // 刷新新闻列表
+                    loadNewsList();
+                },
+                error: function() {
+                    alert('编辑新闻失败');
+                }
+            });
+        }
+
+        // 加载新闻详情
+        function loadNewsDetail(id) {
+            $.ajax({
+                url: '/news/detail',
+                type: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                success: function(news) {
+                    document.getElementById('newsDetailTitle').textContent = news.n_title;
+                    document.getElementById('newsDetailInfo').textContent = '作者：' + news.n_author + ' | 发布时间：' + news.n_time;
+                    
+                    var imageElement = document.getElementById('newsDetailImage');
+                    if (news.n_pic) {
+                        // 直接使用后端提供的完整图片路径
+                        imageElement.src = '/upimages/' + news.n_pic;
+                        imageElement.style.display = 'block';
+                    } else {
+                        imageElement.style.display = 'none';
+                    }
+                    
+                    document.getElementById('newsDetailContentText').textContent = news.n_content;
+                },
+                error: function() {
+                    alert('加载新闻详情失败');
+                }
+            });
+        }
+
+        // 表单提交处理
+        $(document).ready(function() {
+            // 登录表单提交
+            $('#loginForm').submit(function(event) {
+                event.preventDefault(); // 阻止表单默认提交
+                
+                var username = $('#loginUsername').val();
+                var password = $('#loginPassword').val();
+                
+                if (username === '' || password === '') {
+                    alert('请输入用户名和密码！');
+                    return;
+                }
+                
+                login(username, password);
+            });
+
+            // 新闻发布表单提交
+            $('#newsPublishForm').submit(function(event) {
+                event.preventDefault(); // 阻止表单默认提交
+                
+                var formData = new FormData(this);
+                
+                $.ajax({
+                    url: '/news/publish',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        alert(response);
+                        if (response === '发布成功') {
+                            // 清空表单
+                            $('#newsPublishForm')[0].reset();
+                            // 返回新闻列表
+                            showNewsList();
+                        }
+                    },
+                    error: function() {
+                        alert('发布新闻失败');
+                    }
+                });
+            });
+
+            // 用户注册表单提交
+            $('#userRegisterForm').submit(function(event) {
+                event.preventDefault(); // 阻止表单默认提交
+                
+                var formData = $(this).serialize();
+                
+                $.ajax({
+                    url: '/admin/Register',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response !== '-1') {
+                            alert('注册成功，用户ID：' + response);
+                            // 清空表单
+                            $('#userRegisterForm')[0].reset();
+                            // 返回用户管理页面
+                            showUserManagement();
+                        } else {
+                            alert('注册失败');
+                        }
+                    },
+                    error: function() {
+                        alert('添加用户失败');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
